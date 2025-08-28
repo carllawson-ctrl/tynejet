@@ -1,1 +1,100 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>TyneJet</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background: #003399;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+        #tynejet-text {
+            position: absolute;
+            top: 45%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 42px;
+            font-family: 'Press Start 2P', 'VT323', 'PixelOperator', monospace;
+            letter-spacing: 2px;
+            z-index: 2;
+            text-shadow: 2px 2px 0 #222, 0 2px 0 #222, 2px 0 0 #222;
+            filter: contrast(170%) brightness(1.1);
+            white-space: nowrap;
+            user-select: none;
+        }
+        #plane {
+            position: absolute;
+            top: calc(50% - 12px);
+            left: 0%;
+            width: 56px;  /* 4x scale */
+            height: 28px;
+            image-rendering: pixelated;
+            z-index: 1;
+            pointer-events: none;
+            transition: none;
+        }
+        @media (max-width: 500px) {
+            #tynejet-text {
+                font-size: 16px;
+            }
+            #plane {
+                width: 28px;
+                height: 14px;
+            }
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+    </style>
+</head>
+<body>
+    <div id="tynejet-text">TyneJet</div>
+    <img id="plane" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAHCAYAAADeb6kAAAAABHNCSVQICAgIfAhkiAAAAIFJREFUGJVjYBicGDAgEmBY5w6wEKgU4k8CrQY2gVhAhpYI2B8Q3GBbZbQwQnqgQwI4k/h7Dgk64QG4YVEwGg6QxkE4t3g4gkXiR8wMhwKcAAwAYhQnX0iZ1BwAAAABJRU5ErkJggg==" alt="plane"/>
+    <script>
+        // Animate plane left to right
+        const plane = document.getElementById('plane');
+        const text = document.getElementById('tynejet-text');
+        function animatePlane() {
+            const bodyWidth = document.body.offsetWidth;
+            const textRect = text.getBoundingClientRect();
+            // Start just left of text, end just right of screen
+            const startLeft = Math.max(0, textRect.left - 70);
+            const endLeft = bodyWidth;
+            // Animation duration based on width (3 seconds minimum)
+            const duration = Math.max(3, (endLeft - startLeft) / 200) * 1000;
+            plane.style.left = startLeft + 'px';
+            plane.style.opacity = 1;
+            plane.style.transition = 'none';
+            setTimeout(() => {
+                plane.style.transition = `left ${duration}ms linear`;
+                plane.style.left = endLeft + 'px';
+            }, 20);
+            setTimeout(() => {
+                plane.style.opacity = 0;
+                // After fade out, restart
+                setTimeout(animatePlane, 1000);
+            }, duration);
+        }
+        // Position plane vertically
+        function updatePlaneTop() {
+            const bodyHeight = document.body.offsetHeight;
+            const planeHeight = plane.offsetHeight;
+            plane.style.top = (bodyHeight/2 - planeHeight/2) + 'px';
+        }
+        window.addEventListener('resize', () => {
+            updatePlaneTop();
+        });
+        window.addEventListener('DOMContentLoaded', () => {
+            updatePlaneTop();
+            animatePlane();
+        });
+    </script>
+</body>
+</html>
